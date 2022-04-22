@@ -125,7 +125,7 @@ namespace RecruitmentExercise
                 File.AppendAllText(filePath, message + "\n");
             }
 
-            File.AppendAllText(filePath, "Last request date: " + DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss"));
+            File.AppendAllText(filePath, "------------------------------------------------\n");
             
 
             Console.WriteLine("Closing the program...");
