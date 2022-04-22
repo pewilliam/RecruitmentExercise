@@ -24,47 +24,94 @@ namespace RecruitmentExercise
 
             for (int i = 0; i < usernames.Length; i++)
             {
-                try
+                if (i < usernames.Length - 1)
                 {
-                    string target = "https://api.bitbucket.org/2.0/users/" + usernames[i];
-                    WebRequest wrGETURL;
-                    wrGETURL = WebRequest.Create(target);
-
-                    Stream objStream;
-                    objStream = wrGETURL.GetResponse().GetResponseStream();
-
-                    StreamReader objReader = new StreamReader(objStream);
-
-                    string sLine = "";
-                    int j = 0;
-
-                    while (sLine != null)
+                    try
                     {
-                        j++;
-                        sLine = objReader.ReadLine();
-                        if (sLine != null)
-                            Console.WriteLine("{0}:{1}", j, sLine);
-                    }
-                    Console.ReadLine();
+                        string target = "https://api.bitbucket.org/2.0/users/" + usernames[i];
+                        WebRequest wrGETURL;
+                        wrGETURL = WebRequest.Create(target);
 
+                        Stream objStream;
+                        objStream = wrGETURL.GetResponse().GetResponseStream();
+
+                        StreamReader objReader = new StreamReader(objStream);
+
+                        string sLine = "";
+                        int j = 0;
+
+                        while (sLine != null)
+                        {
+                            j++;
+                            sLine = objReader.ReadLine();
+                            if (sLine != null)
+                                Console.WriteLine("{0}:{1}", j, sLine);
+                        }
+                        Console.ReadLine();
+
+                    }
+                    catch (WebException ex)
+                    {
+                        using (Stream stream = ex.Response.GetResponseStream())
+                        using (var reader = new StreamReader(stream, Encoding.UTF8))
+                        {
+                            Console.WriteLine("Username: " + usernames[i]);
+                            content = reader.ReadToEnd();
+                            Console.WriteLine(content);
+                            logMessages.Add(content);
+                            Console.WriteLine("URL: https://api.bitbucket.org/2.0/users/" + usernames[i] + "\n");
+                        }
+                    }
+                    System.Threading.Thread.Sleep(5000);
                 }
-                catch (WebException ex)
+                else
                 {
-                    using (Stream stream = ex.Response.GetResponseStream())
-                    using (var reader = new StreamReader(stream, Encoding.UTF8))
+                    try
                     {
-                        stream.Seek(0, SeekOrigin.Begin);
-                        Console.WriteLine("Username: " + usernames[i]);
-                        Console.WriteLine(reader.ReadToEnd());
+                        string target = "https://api.bitbucket.org/2.0/users/" + usernames[i];
+                        WebRequest wrGETURL;
+                        wrGETURL = WebRequest.Create(target);
 
-                        stream.Seek(0, SeekOrigin.Begin);
-                        content = reader.ReadToEnd().ToString();
-                        Console.WriteLine(content);
-                        Console.WriteLine("URL: https://api.bitbucket.org/2.0/users/" + usernames[i] + "\n");
+                        Stream objStream;
+                        objStream = wrGETURL.GetResponse().GetResponseStream();
+
+                        StreamReader objReader = new StreamReader(objStream);
+
+                        string sLine = "";
+                        int j = 0;
+
+                        while (sLine != null)
+                        {
+                            j++;
+                            sLine = objReader.ReadLine();
+                            if (sLine != null)
+                                Console.WriteLine("{0}:{1}", j, sLine);
+                        }
+                        Console.ReadLine();
+
+                    }
+                    catch (WebException ex)
+                    {
+                        using (Stream stream = ex.Response.GetResponseStream())
+                        using (var reader = new StreamReader(stream, Encoding.UTF8))
+                        {
+                            Console.WriteLine("Username: " + usernames[i]);
+                            content = reader.ReadToEnd();
+                            Console.WriteLine(content);
+                            logMessages.Add(content);
+                            Console.WriteLine("URL: https://api.bitbucket.org/2.0/users/" + usernames[i] + "\n");
+                        }
                     }
                 }
-                System.Threading.Thread.Sleep(5000);
             }
+
+            foreach(string message in logMessages)
+            {
+                File.AppendAllText(filePath, message + "\n");
+            }
+
+            Console.WriteLine("Closing the program...");
+            System.Threading.Thread.Sleep(5000);
         }
     }
 }
