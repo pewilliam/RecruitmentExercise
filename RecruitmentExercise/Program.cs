@@ -15,11 +15,26 @@ namespace RecruitmentExercise
 
             var logFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
             var filePath = logFile + "logFile.txt";
-            File.Create(filePath).Dispose();
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Dispose();
+            }
+            else
+            {
+                DateTime dt1 = File.GetLastWriteTime(filePath);
+                DateTime dtNow = DateTime.Now;
+                if ((dtNow - dt1).TotalSeconds < 60)
+                {
+                    Console.WriteLine("You should wait for at least 60 seconds to make another request.");
+                    Console.WriteLine("Closing program now...");
+                    System.Threading.Thread.Sleep(5000);
+                    Environment.Exit(0);
+                }
+            }            
 
-            Console.WriteLine("Enter the file path: ");
+            Console.Write("Enter the file path: ");
             string path = Console.ReadLine();
-
+            Console.WriteLine();
             string[] usernames = File.ReadAllLines(path);
 
             for (int i = 0; i < usernames.Length; i++)
@@ -109,6 +124,9 @@ namespace RecruitmentExercise
             {
                 File.AppendAllText(filePath, message + "\n");
             }
+
+            File.AppendAllText(filePath, "Last request date: " + DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss"));
+            
 
             Console.WriteLine("Closing the program...");
             System.Threading.Thread.Sleep(5000);
